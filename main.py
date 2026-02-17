@@ -1,11 +1,17 @@
 import pandas as pd 
 import requests
 from sqlalchemy import create_engine
-from working_projects.data_cleaning import clean_data
-from working_projects.create_db import create_tables
-from working_projects.api_calls import call_api
+from working_project.data_cleaning import clean_data
+from working_project.create_db import create_tables
+from working_project.api_calls import call_api
+
 # 
 def the_project():
+    """
+    this method uses stores data to the postgres tables 
+    raw_forecast and current_forecast
+    """
+
     path_to_db = 'postgresql://myuser:mypassword@localhost:5432/mydatabase'
     engine = create_engine(path_to_db)
 
