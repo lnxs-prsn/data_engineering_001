@@ -1,9 +1,9 @@
 from lxml import etree
 import requests
 import pandas as pd
-from api_calls import call_api
+# from api_calls import call_api
 
-resp = call_api()
+# resp = call_api()
 def clean_data(resp):
     root = etree.fromstring(resp.text.encode())
     ns = root.nsmap
