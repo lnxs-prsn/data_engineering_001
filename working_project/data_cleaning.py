@@ -16,7 +16,7 @@ def clean_data(resp):
     # columns
     alist = [x.get('name').lower() for x in root.xpath('//swe:field', namespaces=ns)]
     columns1 = alist
-    print(columns1)
+    # print(columns1)
 
     for num, tvp in enumerate(root.xpath('//gml:doubleOrNilReasonTupleList', namespaces=ns)):
         alist = tvp.text.split('\n')

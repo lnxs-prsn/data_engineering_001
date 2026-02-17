@@ -1,9 +1,10 @@
-from working_project.add_to_db import working_project
+from working_project.add_to_db import w_project
 
 
 def main():
     
-    working_project()
+    w_project()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
+main()
