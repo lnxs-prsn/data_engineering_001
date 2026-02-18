@@ -12,6 +12,7 @@ def the_project():
     """
     this method stores data to the postgres tables 
     raw_forecast and current_forecast
+    returns: boolean
     """
 
     path_to_db = 'postgresql://myuser:mypassword@localhost:5432/mydatabase'
@@ -34,7 +35,7 @@ def the_project():
         except Exception as e:
             print('error is likely related to duplicate data in current_forecast table')
             print(f'there was error {e}')
-    return 'all done api call was made, response was parsed, cleaned and added to database'
+    return True
 
 def main():
     the_project()

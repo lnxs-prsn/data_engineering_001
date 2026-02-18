@@ -14,4 +14,7 @@ def call_api():
 
     resp = requests.get(url=url, params=params)
     resp.raise_for_status()
-    return resp.content
+    print(type(resp.content))
+    return resp.content 
+
+call_api()
