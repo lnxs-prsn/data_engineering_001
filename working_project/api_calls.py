@@ -1,4 +1,4 @@
-import requests as rq
+import requests 
 
 def call_api():
     url = 'https://opendata.fmi.fi/wfs'
@@ -12,7 +12,6 @@ def call_api():
         # 'endtime':'',
     }
 
-    resp = rq.get(url=url, params=params)
-    if resp.ok:
-        return resp
-    return resp.raise_for_status()
+    resp = requests.get(url=url, params=params)
+    resp.raise_for_status()
+    return resp.content

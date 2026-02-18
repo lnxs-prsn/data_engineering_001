@@ -1,4 +1,7 @@
-This project 
+WeatherApp A
+
+data engineering pipeline that fetches data from 
+
 requests from fmi wfs endpoint Helsinki area weather forecast 
 parses data, cleans and organizes data 
 creates postgres table and stores data to two tables 

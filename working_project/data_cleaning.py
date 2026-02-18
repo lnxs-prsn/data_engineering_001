@@ -5,7 +5,7 @@ import pandas as pd
 
 # resp = call_api()
 def clean_data(resp):
-    root = etree.fromstring(resp.text.encode())
+    root = etree.fromstring(resp)
     ns = root.nsmap
     rows = []
     columns1 = []
@@ -26,7 +26,7 @@ def clean_data(resp):
     rows.pop(50)
 
     # timestamps
-    for num, tvp in enumerate(root.xpath('//gmlcov:positions', namespaces=ns)):
+    for tvp in root.xpath('//gmlcov:positions', namespaces=ns):
         alist = tvp.text.split('\n')
         time_stamps = [x.strip().replace(' ', ',').replace(',,', ',').replace('60.16952,24.93545,', '') for x in alist if x != '']
         # print(time_stamps)
@@ -35,19 +35,20 @@ def clean_data(resp):
 
     ready_rows = []
     for x in rows:
-        alist = [y for y in x.split(',')]
+        alist = x.split(',')
         ready_rows.append(alist)
 
 
 
-    df1 = pd.DataFrame(ready_rows, columns=columns1, dtype=float)
+    df = pd.DataFrame(ready_rows, columns=columns1, dtype=float)
 
-    df1['timestamps'] = time_stamps
+    df['timestamps'] = time_stamps
 
-    df1['timestamps'] = pd.to_datetime(df1['timestamps'].astype(int), unit='s')
+    df['timestamps'] = pd.to_datetime(df['timestamps'].astype(int), unit='s')
 
     # NaN data
-    df2 = df1.drop(columns=['radiationnetsurfacelwaccumulation'])
+    df = df.drop(columns=['radiationnetsurfacelwaccumulation'])
 
-    df3 = df2.drop_duplicates()
-    return df3
+    df = df.drop_duplicates()
+    return df
+# clean_data(resp)
