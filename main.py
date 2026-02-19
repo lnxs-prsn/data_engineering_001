@@ -5,17 +5,19 @@ from working_project.data_cleaning import clean_data
 from working_project.create_db import create_tables
 from working_project.api_calls import call_api
 from working_project.latest_db_row import latest_timestamp
+from decouple import config
 
 
 # 
 def the_project():
     """
-    this method stores data to the postgres tables 
+    this method stores data to postgres tables 
     raw_forecast and current_forecast
     returns: bool
+    :rtype: bool
     """
-
-    path_to_db = 'postgresql://myuser:mypassword@localhost:5432/mydatabase'
+    # decouple gets path from .env
+    path_to_db = config('PATH_TO_DB')
     engine = create_engine(path_to_db)
 
     resp = call_api()
@@ -26,8 +28,7 @@ def the_project():
     # fetches most recent timestamp from the db 
     if latest_time := latest_timestamp(engine): 
             df = df[df['timestamps'] > latest_time].reset_index(drop=True)
-    print(len(df))
-    print('here and all good')
+    # tables are created if they dont exits
     if create_tables(engine) and not df.empty:
         try:
             df.to_sql('raw_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
