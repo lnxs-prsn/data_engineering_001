@@ -2,11 +2,11 @@ from sqlalchemy import text, create_engine
 
 def create_tables(engine) -> bool:
     """
-    Docstring for create_tables
+    create_tables
     receives engine to connect to db and creates 2 tables 
     one for every day use with stricted conditions and one for recovery situations that stores everything
     :param engine: sqlalchemy engine for connection
-    :return: Description
+    :return: bool
     :rtype: bool
     """
 
