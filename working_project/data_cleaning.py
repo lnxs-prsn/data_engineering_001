@@ -1,9 +1,9 @@
 from lxml import etree
 import requests
 import pandas as pd
-# from api_calls import call_api
+# from api_calls import call_fmi_api
 
-# resp = call_api()
+# resp = call_fmi_api()
 def clean_data(resp) -> object:
     """
     clean_data
@@ -60,3 +60,5 @@ def clean_data(resp) -> object:
     df = df.drop_duplicates()
     return df
 # clean_data(resp)
+
+

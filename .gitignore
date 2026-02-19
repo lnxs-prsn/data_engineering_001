@@ -10,5 +10,8 @@ wheels/
 .venv
 
 
+# python project files that might be used later
+latest_db_row.py
+
 #env
 .env

@@ -1,4 +1,7 @@
 from sqlalchemy import text, create_engine
+from sqlalchemy.exc import ProgrammingError
+from datetime import datetime
+
 
 def create_tables(engine) -> bool:
     """
@@ -85,3 +88,30 @@ def create_tables(engine) -> bool:
     except Exception as e:
         return  f'Errror in connecting to docker postgres:   {e} '
     
+
+
+
+def latest_timestamp(engine) -> datetime | None:
+    """
+    latest_timestamp
+    this function fetchest latest added row of the db table current_forecast 
+    column timestams
+    
+    :param engine: sqlalchemy engine
+    :return: datetime object
+    :rtype: object
+    """
+
+
+    with engine.connect() as conn:
+        try:
+            # queries lastest cell of the column timestamps
+            result = conn.execute(text('SELECT timestamps FROM current_forecast ORDER BY timestamps DESC LIMIT 1;'))
+            # returns tuple (timestamp,)
+            if result:
+                latest = result.fetchone()
+                return latest[0]
+        except ProgrammingError as pe:
+            print(f'error from {pe}')
+            return None
+        

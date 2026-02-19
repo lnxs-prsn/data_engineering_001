@@ -1,8 +1,8 @@
 import requests 
 # change the name to fetch weather data
-def call_api() -> bytes:
+def call_fmi_api() -> bytes:
     """
-    call_api
+    call_api_to_fmi
     function fetches data from wfs api from Finnish Meteorological Institute
     :return: content of the requests
     :rtype: bytes

@@ -1,7 +1,8 @@
 from sqlalchemy import text, create_engine
 from sqlalchemy.exc import ProgrammingError
+from datetime import datetime
 
-def latest_timestamp(engine) -> object:
+def latest_timestamp(engine) -> datetime | None:
     """
     latest_timestamp
     this function fetchest latest added row of the db table current_forecast 
@@ -23,5 +24,5 @@ def latest_timestamp(engine) -> object:
                 return latest[0]
         except ProgrammingError as pe:
             print(f'error from {pe}')
-            return False
+            return None
         
