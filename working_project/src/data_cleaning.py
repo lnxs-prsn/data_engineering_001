@@ -1,17 +1,19 @@
 from lxml import etree
 import requests
-import pandas as pd
+import pandas 
 # from api_calls import call_fmi_api
 
 # resp = call_fmi_api()
-def clean_data(resp) -> object:
-    """
-    clean_data
-    function receives binary from the call_api and 
-    parses the data from the response and cleans the data so it can be stored to postgres db
-    :return: python dataframe
-    :rtype: object
-    """
+
+
+def parse_response(resp) -> dict:
+
+    """parse_response   
+function receives binary from the call_api and parses the data to usable format for cleaning and storing to postgres db
+:return: dictionary with columns, rows and timestamps
+:rtype: dict    
+"""
+
     root = etree.fromstring(resp)
     ns = root.nsmap
     rows = []
@@ -20,7 +22,7 @@ def clean_data(resp) -> object:
 
 
 
-    # gets the columns of the data from the xml
+    # gets the columns of the data from the xml 
     alist = [x.get('name').lower() for x in root.xpath('//swe:field', namespaces=ns)]
     columns1 = alist
     # print(columns1)
@@ -46,19 +48,30 @@ def clean_data(resp) -> object:
         alist = x.split(',')
         ready_rows.append(alist)
 
+    data = {'columns': columns1, 'rows': ready_rows, 'timestamps': time_stamps}
+    return data
+
+
+
+def clean_data(data) -> pandas.DataFrame:
+    """
+    clean_data
+    function receives dictionary from parse_response and cleans the data so it can be stored to postgres db
+    :return: python dataframe
+    :rtype: object
+    """
+    
 
     # data from xml is getting stored to df
-    df = pd.DataFrame(ready_rows, columns=columns1, dtype=float)
+    df = pandas.DataFrame(data['rows'], columns=data['columns'], dtype=float)
     # timestamps column is added to dataframe
-    df['timestamps'] = time_stamps
+    df['timestamps'] = data['timestamps']
     # type conversion for timestamps column
-    df['timestamps'] = pd.to_datetime(df['timestamps'].astype(int), unit='s')
-
+    df['timestamps'] = pandas.to_datetime(df['timestamps'].astype(int), unit='s')
     # NaN data column is dropped
     df = df.drop(columns=['radiationnetsurfacelwaccumulation'])
     # duplicates are dropped
     df = df.drop_duplicates()
     return df
-# clean_data(resp)
 
 

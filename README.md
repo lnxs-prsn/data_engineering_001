@@ -1,25 +1,30 @@
-WeatherApp A
+Helsinki weather forecast data pipeline
 
-data engineering pipeline that fetches data from 
+Simple data pipeline that fetches weather forecast data from FMI wfs endpoint for Helsinki area, parses and cleans the data, and stores it in a PostgreSQL database. 
 
-requests from fmi wfs endpoint Helsinki area weather forecast 
-parses data, cleans and organizes data 
-creates postgres table and stores data to two tables 
-raw_forecast and current_forecast
-current_forecast does not allow duplicate data and raw_forecast allows duplicate data
-reason for this arrangement is to be able to recover from human or api errors 
+DATA IS STORED IN 2 TABLES
+* raw_forecast and current_forecast
+  1. current_forecast does not allow duplicate data and raw_forecast allows duplicate data
+     1. reason for this arrangement is to be able to recover from human or api errors 
 
 
 
-PROJECT IS DIVIDED TO 3 SECTIONS 
-
-1. preproject
-   1. here I have stored 
-      1. failures, discarded solutions paths, initial successes that were refined later
-2. working project 
-   1. here are stored the different files that the main.py turns to working project
-   2. this is just mvp at the moment there is lots of hardcoding but due to time limit its left as it is.
-3. post_project
-   1. here is honest reflection about the project
 
 
+TECH STACK
+1. python
+2. pandas
+3. sqlalchemy
+4. requests
+5. decouple
+6. postgresql
+7. docker
+8. pytest
+
+PIPELINE FLOW
+1. call_fmi_api() in api_calls.py is responsible for calling the api and fetching data from it
+1. parse_response() in data_cleaning.py is responsible for parsing the data
+2. clean_data() in data_cleaning.py is responsible for cleaning the data and creating dataframe
+3. save_to_db() in db_functionspy is responsible for saving the data to the database
+4. last_timestamp() in db_functions.py is responsible for getting the latest timestamp from the database is compared to the timestamps in the dataframe to filter out already existing data
+5. main() in main.py is responsible for orchestrating the whole pipeline

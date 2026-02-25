@@ -1,5 +1,5 @@
 import requests 
-# change the name to fetch weather data
+# this file is responsible for calling the api and fetching data from it
 def call_fmi_api() -> bytes:
     """
     call_api_to_fmi
@@ -22,6 +22,8 @@ def call_fmi_api() -> bytes:
     resp = requests.get(url=url, params=params)
     resp.raise_for_status()
     # print(type(resp.content))  
+
+
     return resp.content 
 
-# call_api()
+# call_fmi_api()
