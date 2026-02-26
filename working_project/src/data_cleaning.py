@@ -48,19 +48,19 @@ function receives binary from the call_api and parses the data to usable format 
         alist = x.split(',')
         ready_rows.append(alist)
 
-    data = {'columns': columns1, 'rows': ready_rows, 'timestamps': time_stamps}
-    return data
+    columns_rows_timestamps_dictionary = {'columns': columns1, 'rows': ready_rows, 'timestamps': time_stamps}
+    return columns_rows_timestamps_dictionary   
 
 
 
-def clean_data(data) -> pandas.DataFrame:
+def clean_data(columns_rows_timestamps) -> pandas.DataFrame:
     """
     clean_data
     function receives dictionary from parse_response and cleans the data so it can be stored to postgres db
     :return: python dataframe
     :rtype: object
     """
-    
+    data = columns_rows_timestamps
 
     # data from xml is getting stored to df
     df = pandas.DataFrame(data['rows'], columns=data['columns'], dtype=float)
