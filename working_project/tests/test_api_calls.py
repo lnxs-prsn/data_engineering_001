@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch,Mock
-from src.api_calls import call_fmi_api
+from working_project.src.api_calls import call_fmi_api
 
 
 def test_call_fmi_api_returns_bytes():

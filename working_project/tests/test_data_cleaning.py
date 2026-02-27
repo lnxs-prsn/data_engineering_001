@@ -1,17 +1,15 @@
 import pytest 
-from unittest.mock import Mock, patch
-from src.data_cleaning import clean_data, parse_response
+from working_project.src.data_cleaning import clean_data, parse_response
 import pandas
 
 
 
 def test_clean_data_returns_object():
-    with open('tests/test_response_sample_fmi.xml', 'rb') as f:
+    with open('./test_response_sample_fmi.xml', 'rb') as f:
         xml_bytes = f.read()
 
         columns_rows_timestamps = parse_response(xml_bytes)
         df = clean_data(columns_rows_timestamps)
-
 
 
         assert not df.empty
@@ -19,5 +17,7 @@ def test_clean_data_returns_object():
         assert 'temperature' in df.columns
         assert df['timestamps'].dtype == 'datetime64[s]'
         assert df['temperature'].dtype == 'float64'
+        assert not df['temperature'].dtype == 'float32'
+
 
 test_clean_data_returns_object()
