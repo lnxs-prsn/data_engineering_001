@@ -1,7 +1,7 @@
 import pandas
 import requests
 from sqlalchemy import create_engine
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import SQLAlchemyError
 from working_project.src.data_cleaning import clean_data, parse_response
 from working_project.src.db_functions import create_tables, latest_timestamp
 from working_project.src.api_calls import call_fmi_api
@@ -42,11 +42,13 @@ def the_project() -> tuple[bool, str]:
             logger.info(f'new data to insert {len(df)} rows')
     else:
         logger.info('no existing data in the DB table empty or missing')
-    try:
-        # tables are created if they dont exits
-        if df.empty:
+    
+    if df.empty:
             logger.error(f'Data frame empty no new data to insert')
             return (False, f'dataframe is empty. lastest timestamp in db is {latest_time} ')
+    try:
+        # tables are created if they dont exits
+        
         if not (tables:=create_tables(engine)):
             logger.error(f'Failed to create database tables')
             return (False, 'tables were not created')
@@ -56,7 +58,7 @@ def the_project() -> tuple[bool, str]:
         df.to_sql('current_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
         logger.info('Data was inserted successfully')
         return (True, 'database was updated')
-    except Exception as e:
+    except SQLAlchemyError as e:
         logger.info(f'Database error: {e}', exc_info=True)
         return(False, f'an error occurred while saving data to the database')
 
@@ -73,7 +75,7 @@ def main():
         else:
             logger.error('unexpected return value from the_project function')
     except Exception as e:
-        logger.critical(f'Unhandled error in the main() {e}')
+        logger.critical(f'Unhandled error in the main() {e}', exc_info=True)
         raise
 
 

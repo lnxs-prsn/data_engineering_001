@@ -1,5 +1,10 @@
 from sqlalchemy import text, create_engine
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import (
+    ProgrammingError,
+    OperationalError,
+    IntegrityError,
+    SQLAlchemyError
+)
 from datetime import datetime
 import logging
 
@@ -87,11 +92,21 @@ def create_tables(engine) -> bool:
             conn.execute(text(current_forecast))
             conn.execute(text(tb_raw))
             conn.commit()
+        logger.info('table was created successfully')
         return True
 
-    except Exception as e:
-        return  f'Errror in connecting to docker postgres:   {e} '
-    
+    except OperationalError as oe:
+        logger.error(f'Cannot connect to database:   {oe} ')
+        return False
+    except ProgrammingError as pe:
+
+        logger.error(f'SQL syntax error:   {pe} ')
+        return False
+
+    except SQLAlchemyError as sqe:
+        # catch all error
+        logger.error(f'Database error:   {sqe} ')
+        return False
 
 
 
@@ -116,5 +131,6 @@ def latest_timestamp(engine) -> datetime | None:
                 latest = result.fetchone()
                 return latest[0]
         except ProgrammingError as pe:
-            logger.info(f'NOTE: Table does not exist yet \n\n {pe}\n')
-        
+            logger.error(f'SQL syntax error:   {pe} ')
+        except OperationalError as oe:
+            logger.error(f'Cannot connect to database:   {oe} ')
