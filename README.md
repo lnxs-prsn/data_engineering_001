@@ -32,7 +32,7 @@ PIPELINE FLOW
 
 ##HOW TO RUN
 1.  clone repo 
-2.  copy .env.example to your own .env file and take values from the docker-compose.yml (here you set the values as you want)
+2.  copy .env.example to your own .env file and set values you want
 3. if you don't have uv astral install it <!-- https://docs.astral.sh/uv/getting-started/installation/        #there might have been changes after adding link here -->
 4. if you have python 3.11 run uv sync else run uv python install 3.11 and run uv sync
 5. start virtual enviroment if on linux source .venv/bin/activate and if on windows .venv/Scripts/activate
@@ -42,4 +42,8 @@ PIPELINE FLOW
 
 
 ##TESTING
-
+run pytest in the working_project/tests
+pytest 
+expected result
+collected 4 items 
+passed 4 items

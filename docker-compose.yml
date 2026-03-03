@@ -1,24 +1,3 @@
-# version: '3.8'
-
-# services:
-#   postgres:
-#     image: postgres:16-alpine
-#     container_name: my-postgres
-#     environment:
-#       POSTGRES_USER: myuser
-#       POSTGRES_PASSWORD: mypassword
-#       POSTGRES_DB: mydatabase
-#     ports:
-#       - "5432:5432"  # host:container
-#     volumes:
-#       - postgres_data:/var/lib/postgresql/data
-#     restart: unless-stopped
-
-# volumes:
-#   postgres_data:
-
-
-
 version: '3.8'
 
 services:
@@ -26,15 +5,16 @@ services:
     image: postgres:16-alpine
     container_name: my-postgres
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:  # ensures postgres is ready before your app connects
-      test: ["CMD-SHELL", "pg_isready -U myuser -d mydatabase"]
+    healthcheck:
+      # ensures postgres is ready before your app connects
+      test: [ "CMD-SHELL", "pg_isready -U myuser -d mydatabase" ]
       interval: 5s
       timeout: 5s
       retries: 5
