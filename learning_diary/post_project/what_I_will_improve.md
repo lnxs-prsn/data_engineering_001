@@ -1,7 +1,0 @@
-BELOW IS WHAT I WILL IMPROVE IN FUTURE PROJECT 
-
-
-WHAT THIS PROJECT LACKED
-
-ERROR LOGGING
-    -   there is no coherent logging in place 
