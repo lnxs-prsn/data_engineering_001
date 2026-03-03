@@ -17,15 +17,15 @@ def test_call_fmi_api_returns_bytes():
 
 
 
+## for this to pass set the  call_fmi_api return to resp.text after which this one will pass and above will fail 
+# def test_call_fmi_api_returns_text():
+#     fake_response = Mock()
+#     fake_response.text = 'fake data'
+#     fake_response.raise_for_status = Mock()
 
-def test_call_fmi_api_returns_text():
-    fake_response = Mock()
-    fake_response.text = 'fake data'
-    fake_response.raise_for_status = Mock()
+#     with patch('working_project.src.api_calls.requests.get',return_value=fake_response) as mock_get:
+#         result = call_fmi_api()
+#         assert isinstance(result, str)
+#         assert result == 'fake data'
 
-    with patch('working_project.src.api_calls.requests.get',return_value=fake_response) as mock_get:
-        result = call_fmi_api()
-        assert isinstance(result, str)
-        assert result == 'fake data'
-
-        mock_get.assert_called_once
+#         mock_get.assert_called_once
