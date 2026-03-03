@@ -1,0 +1,173 @@
+diff --git a/main.py b/main.py
+--- main.py
++++ main.py
+@@ -14,21 +14,32 @@
+ 
+     path_to_db = 'postgresql://myuser:mypassword@localhost:5432/mydatabase'
+     engine = create_engine(path_to_db)
+ 
++    # Consider checking if resp is None
+     resp = call_api()
+     df = clean_data(resp)
++    # You could consider pruning the data to only new entries, 
++    # by checking the most recent database entry and removing everything older than that from the new set.
++    # (or only API-fetching entries newer than the most recent database entry)
++    # You'll fix the duplicate data problem, and can run the script repeatedly without worry.
+     print('here and all good')
++    # Have create_tables() return a boolean, not a string
+     if create_tables() == 'success':
+         try:
++            # to_sql() will create a table if it doesn't exist, create_tables() is moot,
++            # though you'd have to insert the `created_at` field in the dataframe to track insertion time.
+             df.to_sql('raw_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
+             df.to_sql('current_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
+         except Exception as e:
+             print('error is likely related to duplicate data in current_forecast table')
+             print(f'there was error {e}')
++    # This seems like something that was intended to be printed, not returned.
++    # Don't return summary strings like this. It's unused, as well.
+     return 'all done api call was made, response was parsed, cleaned and added to database'
+ 
+ def main():
++    # You could have the main code here directly
+     the_project()
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/working_project/api_calls.py b/working_project/api_calls.py
+--- working_project/api_calls.py
++++ working_project/api_calls.py
+@@ -1,4 +1,5 @@
++# Up to taste, but "as rq" here is weird
+ import requests as rq
+ 
+ def call_api():
+     url = 'https://opendata.fmi.fi/wfs'
+@@ -11,8 +12,16 @@
+         # 'starttime': '',
+         # 'endtime':'',
+     }
+ 
++    # You don't generally keyword the first parameter, but it's "fine"
+     resp = rq.get(url=url, params=params)
++    # Checking .ok and calling .raise_for_status() like this is kinda moot
++    # Consider instead just:
++    #   resp = ...
++    #   resp.raise_for_status()
++    #   return resp
++    # or even resp.text, since you only use .text of the response
+     if resp.ok:
+         return resp
++    # raise_for_status() only ever raises and returns nothing, don't... return it.
+     return resp.raise_for_status()
+\ No newline at end of file
+diff --git a/working_project/data_cleaning.py b/working_project/data_cleaning.py
+--- working_project/data_cleaning.py
++++ working_project/data_cleaning.py
+@@ -4,38 +4,45 @@
+ # from api_calls import call_api
+ 
+ # resp = call_api()
+ def clean_data(resp):
++    # Don't encode the text (again), fromstring expect a string, useless roundtrip
+     root = etree.fromstring(resp.text.encode())
+     ns = root.nsmap
+     rows = []
+     columns1 = []
+     time_stamps = []
+ 
+ 
++    # No review on the actual data parsing, since I don't care to look up a sample
+ 
+     # columns
+     alist = [x.get('name').lower() for x in root.xpath('//swe:field', namespaces=ns)]
+     columns1 = alist
+     # print(columns1)
+ 
++    # You're not using num for anything, the enumerate() is moot
++    # Also, loops? You're ignoring all but the last element yielded by the .xpath().
+     for num, tvp in enumerate(root.xpath('//gml:doubleOrNilReasonTupleList', namespaces=ns)):
+         alist = tvp.text.split('\n')
+         arow = [x.strip().replace(' ', ',') for x in alist if x != '']
+         rows = arow
+         # print(rows[49])
++    # ?
+     rows.pop(50)
+ 
+     # timestamps
+     for num, tvp in enumerate(root.xpath('//gmlcov:positions', namespaces=ns)):
+         alist = tvp.text.split('\n')
++        # This seems very fragile
+         time_stamps = [x.strip().replace(' ', ',').replace(',,', ',').replace('60.16952,24.93545,', '') for x in alist if x != '']
+         # print(time_stamps)
+     time_stamps.pop(50)
+ 
+ 
+     ready_rows = []
+     for x in rows:
++        # This could just be `alist = x.split(',')`
+         alist = [y for y in x.split(',')]
+         ready_rows.append(alist)
+ 
+ 
+@@ -49,5 +56,6 @@
+     # NaN data
+     df2 = df1.drop(columns=['radiationnetsurfacelwaccumulation'])
+ 
+     df3 = df2.drop_duplicates()
++    # df1 and df2 are not used anywhere else, you could just have a single 'data' variable you update
+     return df3
+\ No newline at end of file
+diff --git a/working_project/create_db.py b/working_project/create_db.py
+--- working_project/create_db.py
++++ working_project/create_db.py
+@@ -6,10 +6,13 @@
+ 
+ 
+ # # myuser:mypassword@localhost:5432/mydatabase
+ def create_tables() -> str:
++    # Consider passing the engine to create_tables() to avoid hardcoding the databse connection options
++    # Why two connections?
+     conn1 = psycopg2.connect(host='localhost', port='5432', dbname='mydatabase', user='myuser', password='mypassword')
+     conn2 = psycopg2.connect(host='localhost', port='5432', dbname='mydatabase', user='myuser', password='mypassword')
++    # Why rollback on fresh connections?
+     conn1.rollback()
+     conn2.rollback()
+ 
+ # 'pressure', 'geopheight', 'temperature', 'dewpoint', 'humidity',
+@@ -46,8 +49,10 @@
+ 
+     """
+ 
+ 
++    # It seems moot to have a table holding duplicate data.
++    # Also, `timestamps` is plural while the column holds one timestamp
+     tb_raw = """
+             CREATE TABLE IF NOT EXISTS raw_forecast(   
+             id SERIAL PRIMARY KEY,   
+             pressure DECIMAL(12, 4),   
+@@ -78,8 +83,9 @@
+     try:
+         #create raw_forecast table
+         cur1 = conn1.cursor()
+         
++        # You can use one connection/cursor to execute the two statements.
+         cur1.execute(query=current_forecast)
+     # 
+ 
+         cur2 = conn2.cursor()
+@@ -92,10 +98,14 @@
+         cur2.close()
+ 
+         conn1.close()
+         conn2.close()
++        # Don't return booleans as strings, just return True
+         return 'success'
+ 
+     except psycopg2.Error as e:
++        # Don't return errors as strings, raise an error!
++        # If you want to include your own context, consider:
++        #  raise Exception("Failed to connect to database!") from e
+         return  f'Errror in connecting to docker postgres:   {e} '
+     
+ 

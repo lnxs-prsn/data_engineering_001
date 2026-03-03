@@ -12,7 +12,7 @@ DATA IS STORED IN 2 TABLES
 
 
 TECH STACK
-1. python
+1. python 3.11
 2. pandas
 3. sqlalchemy
 4. requests
@@ -31,6 +31,14 @@ PIPELINE FLOW
 
 
 ##HOW TO RUN
+1.  clone repo 
+2.  copy .env.example to your own .env file and take values from the docker-compose.yml (here you set the values as you want)
+3. if you don't have uv astral install it <!-- https://docs.astral.sh/uv/getting-started/installation/        #there might have been changes after adding link here -->
+4. if you have python 3.11 run uv sync else run uv python install 3.11 and run uv sync
+5. start virtual enviroment if on linux source .venv/bin/activate and if on windows .venv/Scripts/activate
+6. run docker-compose  up -d if you want to run it in the background.
+7. run python main.py in the data_engineering_001 directory 
+
 
 
 ##TESTING
