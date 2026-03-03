@@ -1,7 +1,11 @@
 from sqlalchemy import text, create_engine
 from sqlalchemy.exc import ProgrammingError
 from datetime import datetime
+import logging
 
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
+
+logger = logging.getLogger(__name__)
 
 def create_tables(engine) -> bool:
     """
@@ -112,6 +116,5 @@ def latest_timestamp(engine) -> datetime | None:
                 latest = result.fetchone()
                 return latest[0]
         except ProgrammingError as pe:
-            print(f'error from {pe}')
-            return None
+            logger.info(f'NOTE: Table does not exist yet \n\n {pe}\n')
         
