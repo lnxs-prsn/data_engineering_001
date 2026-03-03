@@ -7,7 +7,7 @@ from sqlalchemy.exc import (
 )
 from datetime import datetime
 import logging
-
+from .constants import RAW_TABLE, PROCESSED_TABLE
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ def create_tables(engine) -> bool:
 #        'radiationglobalaccumulation', 'radiationnetsurfaceswaccumulation',
 #        'radiationswaccumulation', 'visibility', 'windgust', 'timestamps'
 
-    current_forecast = """ CREATE TABLE IF NOT EXISTS current_forecast(   
+    current_forecast = f""" CREATE TABLE IF NOT EXISTS {PROCESSED_TABLE}(   
             id SERIAL PRIMARY KEY,   
             pressure DECIMAL(12, 4),   
             geopheight DECIMAL(12, 4),
@@ -58,8 +58,8 @@ def create_tables(engine) -> bool:
     """
 
 # this table was create to deal with unexpected problems that might arise and cannot be predicted yet
-    tb_raw = """
-            CREATE TABLE IF NOT EXISTS raw_forecast(   
+    tb_raw = f"""
+            CREATE TABLE IF NOT EXISTS {RAW_TABLE}(   
             id SERIAL PRIMARY KEY,   
             pressure DECIMAL(12, 4),   
             geopheight DECIMAL(12, 4),

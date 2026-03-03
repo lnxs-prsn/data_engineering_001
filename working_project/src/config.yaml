@@ -1,0 +1,8 @@
+location:
+  name: "Helsinki"
+  lat: 60.1699
+  lon: 24.9384
+
+api:
+  base_url: "https://opendata.fmi.fi/wfs"
+  timeout_seconds: 30
