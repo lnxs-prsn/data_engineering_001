@@ -2,6 +2,9 @@ import requests
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 import logging
 import yaml
+from pathlib import Path
+
+
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
 
 logger = logging.getLogger(__name__)
@@ -17,7 +20,9 @@ def call_fmi_api() -> bytes:
     :rtype: bytes
     """
 
-    with open('./config.yaml', 'r') as file:
+    script_dir = Path(__file__).parent
+
+    with open(script_dir / 'config.yaml', 'r') as file:
         config = yaml.safe_load(file)
         # text = file.read()
     # print(text)
