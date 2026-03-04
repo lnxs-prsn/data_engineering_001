@@ -33,6 +33,7 @@ def call_fmi_api() -> bytes:
     }
     # not sure if there should be comments here as its self explanatory
     ##
+    print(f'reached here which means that the config worked {url}')
     logger.info('calling api')
     resp = requests.get(url=url, params=params)
     resp.raise_for_status()
@@ -41,4 +42,4 @@ def call_fmi_api() -> bytes:
 
     return resp.content 
 
-# call_fmi_api()
+call_fmi_api()
