@@ -44,4 +44,4 @@ def call_fmi_api() -> bytes:
 
     return resp.content 
 
-call_fmi_api()
+# call_fmi_api()
