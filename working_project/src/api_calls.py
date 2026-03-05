@@ -24,8 +24,6 @@ def call_fmi_api() -> bytes:
 
     with open(script_dir / 'config.yaml', 'r') as file:
         config = yaml.safe_load(file)
-        # text = file.read()
-    # print(text)
     url = config['api']['base_url']
     params = {
         'service':config['services']['service1'],
@@ -38,7 +36,6 @@ def call_fmi_api() -> bytes:
     }
     # not sure if there should be comments here as its self explanatory
     ##
-    print(f'reached here which means that the config worked {url}')
     logger.info('calling api')
     resp = requests.get(url=url, params=params)
     resp.raise_for_status()

@@ -26,7 +26,12 @@ def the_project() -> tuple[bool, str]:
      - error message if an exception occurred during the database update process
     """
     # decouple gets path from .env
-    path_to_db = config('PATH_TO_DB')
+    user = config('POSTGRES_USER')
+    passw = config('POSTGRES_PASSWORD')
+    db = config('POSTGRES_DB')
+
+    path_to_db = f'postgresql://{user}:{passw}@localhost:5432/{db}'
+
     engine = create_engine(path_to_db)
 
     resp = call_fmi_api()
