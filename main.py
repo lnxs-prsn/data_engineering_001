@@ -29,8 +29,9 @@ def the_project() -> tuple[bool, str]:
     user = config('POSTGRES_USER')
     passw = config('POSTGRES_PASSWORD')
     db = config('POSTGRES_DB')
+    db_host = config('DB_HOST', default='localhost')
 
-    path_to_db = f'postgresql://{user}:{passw}@localhost:5432/{db}'
+    path_to_db = f'postgresql://{user}:{passw}@{db_host}:5432/{db}'
 
     engine = create_engine(path_to_db)
 
