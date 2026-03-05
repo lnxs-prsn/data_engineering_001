@@ -133,5 +133,7 @@ def latest_timestamp(engine: Engine) -> datetime | None:
                 return latest[0]
         except ProgrammingError as pe:
             logger.error(f'SQL syntax error:   {pe} ')
+            return None
         except OperationalError as oe:
             logger.error(f'Cannot connect to database:   {oe} ')
+            return None
