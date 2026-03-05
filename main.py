@@ -53,7 +53,7 @@ def the_project() -> tuple[bool, str]:
             logger.error(f'Failed to create database tables')
             return (False, 'tables were not created')
         
-        logger.info('inserting {len(df) }rows')
+        logger.info(f'inserting {len(df) }rows')
         df.to_sql('raw_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
         df.to_sql('current_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
         logger.info('Data was inserted successfully')
