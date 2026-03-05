@@ -5,6 +5,7 @@ from sqlalchemy.exc import (
     IntegrityError,
     SQLAlchemyError
 )
+from sqlalchemy.engine import Engine
 from datetime import datetime
 import logging
 from .constants import RAW_TABLE, PROCESSED_TABLE
@@ -12,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(mes
 
 logger = logging.getLogger(__name__)
 
-def create_tables(engine) -> bool:
+def create_tables(engine: Engine ) -> bool:
     """
     create_tables
     receives engine to connect to db and creates 2 tables 
@@ -110,7 +111,7 @@ def create_tables(engine) -> bool:
 
 
 
-def latest_timestamp(engine) -> datetime | None:
+def latest_timestamp(engine: Engine) -> datetime | None:
     """
     latest_timestamp
     this function fetchest latest added row of the db table current_forecast 

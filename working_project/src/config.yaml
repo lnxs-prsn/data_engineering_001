@@ -6,3 +6,21 @@ location:
 api:
   base_url: "https://opendata.fmi.fi/wfs"
   timeout_seconds: 30
+
+
+query_id:
+  forecast_id: 'fmi::forecast::harmonie::surface::point::multipointcoverage'
+  
+requests:
+  getfeature: 'getFeature'
+
+versions:
+  version2: '2.0.0'
+
+services:
+  service1: 'WFS'
+
+
+times:
+  starttime: ''
+  endtime: ''

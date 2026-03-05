@@ -6,7 +6,7 @@ import pandas
 # resp = call_fmi_api()
 
 
-def parse_response(resp) -> dict:
+def parse_response(resp: requests.Response) -> dict:
 
     """parse_response   
 function receives binary from the call_api and parses the data to usable format for cleaning and storing to postgres db
@@ -53,7 +53,7 @@ function receives binary from the call_api and parses the data to usable format 
 
 
 
-def clean_data(columns_rows_timestamps) -> pandas.DataFrame:
+def clean_data(columns_rows_timestamps: dict) -> pandas.DataFrame:
     """
     clean_data
     function receives dictionary from parse_response and cleans the data so it can be stored to postgres db

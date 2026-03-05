@@ -5,20 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "cloudnet-api-client>=0.12.7",
-    "eccodes>=2.45.0",
-    "fmi-weather-client>=1.0.0",
-    "fmiopendata>=0.5.0",
-    "geopandas>=1.1.2",
     "lxml>=6.0.2",
-    "owslib>=0.35.0",
     "pandas>=3.0.0",
-    "psycopg2-binary>=2.9.11",
     "pytest>=9.0.2",
     "python-decouple>=3.8",
     "pyyaml>=6.0.3",
     "requests>=2.32.5",
     "sqlalchemy>=2.0.46",
     "tenacity>=9.1.4",
-    "xmltodict>=1.0.2",
 ]

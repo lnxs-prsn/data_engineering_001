@@ -28,11 +28,11 @@ def call_fmi_api() -> bytes:
     # print(text)
     url = config['api']['base_url']
     params = {
-        'service':'WFS',
-        'version':'2.0.0',
-        'request':'getFeature',
-        'storedquery_id':'fmi::forecast::harmonie::surface::point::multipointcoverage',
-        'place':'helsinki',
+        'service':config['services']['service1'],
+        'version':config['versions']['version2'],
+        'request':config['requests']['getfeature'],
+        'storedquery_id':config['query_id']['forecast_id'],
+        'place':config['location']['name'],
         # 'starttime': '',
         # 'endtime':'',
     }
