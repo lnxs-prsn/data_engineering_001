@@ -44,4 +44,4 @@ jobs:
         uv pip install --system ruff
         ruff check 
     - name: Clean up
-      run: docker-compose down
+      run: docker compose down
