@@ -23,35 +23,29 @@ function receives binary from the call_api and parses the data to usable format 
 
 
     # gets the columns of the data from the xml 
-    alist = [x.get('name').lower() for x in root.xpath('//swe:field', namespaces=ns)]
-    columns1 = alist
+    blist = [x.get('name').lower() for x in root.xpath('//swe:field', namespaces=ns)]
+    columns1 = blist
     # print(columns1)
 
     # gets rows of the data from the xml
     for num, tvp in enumerate(root.xpath('//gml:doubleOrNilReasonTupleList', namespaces=ns)):
         alist = tvp.text.split('\n')
-        arow = [x.strip().replace(' ', ',') for x in alist if x != '']
-        rows = arow
-        # print(rows[49])
-    rows.pop(50)
+        rows = [x.split() for x in alist if x.strip()]
+        
 
     # gets timestamps from the xml
     for tvp in root.xpath('//gmlcov:positions', namespaces=ns):
         alist = tvp.text.split('\n')
-        time_stamps = [x.strip().replace(' ', ',').replace(',,', ',').replace('60.16952,24.93545,', '') for x in alist if x != '']
+        time_stamps = [x.split()[-1] for x in alist if x.strip()]
         # print(time_stamps)
-    time_stamps.pop(50)
 
-    # organizes data in df usable way
-    ready_rows = []
-    for x in rows:
-        alist = x.split(',')
-        ready_rows.append(alist)
-
-    columns_rows_timestamps_dictionary = {'columns': columns1, 'rows': ready_rows, 'timestamps': time_stamps}
+    columns_rows_timestamps_dictionary = {'columns': columns1, 'rows': rows, 'timestamps': time_stamps}
     return columns_rows_timestamps_dictionary   
 
+with open('./test_response_sample_fmi.xml', 'rb') as f:
+    xml_bytes = f.read()
 
+    columns_rows_timestamps = parse_response(xml_bytes)
 
 def clean_data(columns_rows_timestamps: dict) -> pandas.DataFrame:
     """
@@ -73,5 +67,8 @@ def clean_data(columns_rows_timestamps: dict) -> pandas.DataFrame:
     # duplicates are dropped
     df = df.drop_duplicates()
     return df
+
+
+
 
 
