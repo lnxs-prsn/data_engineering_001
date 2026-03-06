@@ -42,10 +42,7 @@ function receives binary from the call_api and parses the data to usable format 
     columns_rows_timestamps_dictionary = {'columns': columns1, 'rows': rows, 'timestamps': time_stamps}
     return columns_rows_timestamps_dictionary   
 
-with open('./test_response_sample_fmi.xml', 'rb') as f:
-    xml_bytes = f.read()
 
-    columns_rows_timestamps = parse_response(xml_bytes)
 
 def clean_data(columns_rows_timestamps: dict) -> pandas.DataFrame:
     """
