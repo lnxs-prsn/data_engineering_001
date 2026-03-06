@@ -1,5 +1,3 @@
-import pandas
-import requests
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from working_project.src.data_cleaning import clean_data, parse_response
@@ -50,13 +48,13 @@ def the_project() -> tuple[bool, str]:
         logger.info('no existing data in the DB table empty or missing')
     
     if df.empty:
-            logger.error(f'Data frame empty no new data to insert')
+            logger.error('Data frame empty no new data to insert')
             return (False, f'dataframe is empty. lastest timestamp in db is {latest_time} ')
     try:
         # tables are created if they dont exits
         
-        if not (tables:=create_tables(engine)):
-            logger.error(f'Failed to create database tables')
+        if not create_tables(engine):
+            logger.error('Failed to create database tables')
             return (False, 'tables were not created')
         
         logger.info(f'inserting {len(df) }rows')
@@ -66,7 +64,7 @@ def the_project() -> tuple[bool, str]:
         return (True, 'database was updated')
     except SQLAlchemyError as e:
         logger.info(f'Database error: {e}', exc_info=True)
-        return(False, f'an error occurred while saving data to the database')
+        return(False, 'an error occurred while saving data to the database')
 
 
 def main():

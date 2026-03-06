@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import patch,Mock
 from working_project.src.api_calls import call_fmi_api
 

@@ -1,4 +1,3 @@
-import pytest 
 from working_project.src.data_cleaning import parse_response
 
 

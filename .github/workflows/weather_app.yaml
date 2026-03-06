@@ -42,6 +42,6 @@ jobs:
     - name: Lint with ruff
       run: |
         uv pip install --system ruff
-        ruff check .
+        ruff check 
     - name: Clean up
       run: docker-compose down

@@ -1,10 +1,5 @@
-import pytest 
-import unittest
-import datetime
-from working_project.src.db_functions import create_tables, latest_timestamp
-from sqlalchemy.exc import ProgrammingError 
-from sqlalchemy import text, create_engine  
-from unittest.mock import MagicMock, patch, Mock
+from working_project.src.db_functions import latest_timestamp
+from unittest.mock import MagicMock
 
 latest_timestamp1 = '2026-02-27 19:00:00'
 

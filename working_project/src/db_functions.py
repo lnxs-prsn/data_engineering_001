@@ -1,8 +1,7 @@
-from sqlalchemy import text, create_engine
+from sqlalchemy import text
 from sqlalchemy.exc import (
     ProgrammingError,
     OperationalError,
-    IntegrityError,
     SQLAlchemyError
 )
 from sqlalchemy.engine import Engine

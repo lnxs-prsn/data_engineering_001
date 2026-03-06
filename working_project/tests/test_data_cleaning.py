@@ -1,6 +1,4 @@
-import pytest 
 from working_project.src.data_cleaning import clean_data, parse_response
-import pandas
 
 
 
