@@ -14,7 +14,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       # ensures postgres is ready before your app connects
-      test: [ "CMD-SHELL", "pg_isready -U myuser -d mydatabase" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 5
