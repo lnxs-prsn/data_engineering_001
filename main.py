@@ -9,7 +9,7 @@ from decouple import config
 import logging
 
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
-
+# pipeline test
 logger = logging.getLogger(__name__)
 # 
 def the_project() -> tuple[bool, str]:
@@ -29,7 +29,7 @@ def the_project() -> tuple[bool, str]:
     user = config('POSTGRES_USER')
     passw = config('POSTGRES_PASSWORD')
     db = config('POSTGRES_DB')
-    db_host = config('DB_HOST', default='localhost')
+    db_host = config('POSTGRES_HOST', default='localhost')
 
     path_to_db = f'postgresql://{user}:{passw}@{db_host}:5432/{db}'
 
