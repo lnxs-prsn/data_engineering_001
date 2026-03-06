@@ -37,7 +37,7 @@ jobs:
     - name: Run test
       run: | 
         cd working_project/tests 
-        uv run pytest working_project/tests/
+        uv run pytest 
 
     - name: Lint with ruff
       run: |
