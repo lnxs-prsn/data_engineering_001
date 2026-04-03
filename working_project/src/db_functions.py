@@ -136,3 +136,5 @@ def latest_timestamp(engine: Engine) -> datetime | None:
         except OperationalError as oe:
             logger.error(f'Cannot connect to database:   {oe} ')
             return None
+
+
