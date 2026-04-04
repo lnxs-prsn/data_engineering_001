@@ -36,7 +36,8 @@ from sqlalchemy import Column, Numeric, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
-Base = DeclarativeBase
+class Base(DeclarativeBase):
+    pass
 
 class WeatherTable(Base):
     __tablename__ = 'weathertables'

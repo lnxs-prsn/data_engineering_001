@@ -1,17 +1,23 @@
 from lxml import etree
 import requests
-import pandas 
-from typing import Iterable, Generator
+from typing import Generator
 from datetime import datetime
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
+
+logger = logging.getLogger(__name__)
+
+
 
 def parse_xml_to_raw_row_dict(resp: requests.Response) -> Generator[dict, None, None]:
-    """
-    function receives binary from the call_api and parses the data to usable format for cleaning and storing to postgres db
-:return: Generator which yields dictionary
-:rtype: Generator[dict, None, None]   
     
     """
-
+    function receives binary from the call_api and parses the data to usable format for cleaning and storing to postgres db
+    :return: Generator which yields dictionary
+    :rtype: Generator[dict, None, None]   
+    
+    """
     root = etree.fromstring(resp)
     ns = root.nsmap
     time_stamps = []
@@ -33,22 +39,23 @@ def parse_xml_to_raw_row_dict(resp: requests.Response) -> Generator[dict, None, 
     for idx, tvp in enumerate(root.xpath('//gml:doubleOrNilReasonTupleList', namespaces=ns)):
         if not tvp.text:
             continue
+        
         for line in tvp.text.split('\n'):
             if not line.strip():
                 continue
-
+            
             row_values = line.split()
             if len(row_values) != len(column_names):
                 continue
-            raw_row_dict = dict(zip(row_values, column_names))
+            raw_row_dict = dict(zip(column_names, row_values))
+            nan_keys = [k for k, v in raw_row_dict.items() if v == "NaN"]  # ['radiationnetsurfacelwaccumulation']
+            logger.info(f' these columns have nan values and were excluded from the db {nan_keys}')
+            for k in nan_keys:
+                del raw_row_dict[k]
+
             if idx < len(time_stamps):
                 raw_row_dict['timestamps'] = datetime.fromtimestamp(int(time_stamps[idx]))
             yield raw_row_dict
-
-
-
-    
-
 
 
 

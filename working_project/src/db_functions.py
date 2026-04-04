@@ -138,3 +138,4 @@ def latest_timestamp(engine: Engine) -> datetime | None:
             return None
 
 
+    
