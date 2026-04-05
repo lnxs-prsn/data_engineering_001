@@ -3,10 +3,13 @@ from typing import Generator
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-
-def validate_data(raw_row_dict: dict) -> WeatherModel:
+def validate_data(raw_row_dict: dict, num: int=0) -> WeatherModel | bool:
+    if num == 1:
+        return WeatherModel(**raw_row_dict)
     if WeatherModel(**raw_row_dict):
         return True
+    
+    
 
 
 def batch_data(parse_xml_to_raw_row_dict: Generator[dict, None, None], batch_size: int) -> Generator[dict, None, None]:
