@@ -39,7 +39,6 @@ def call_fmi_api() -> bytes:
     logger.info('calling api')
     resp = requests.get(url=url, params=params)
     resp.raise_for_status()
-    # print(type(resp.content))  
 
 
     return resp.content 
