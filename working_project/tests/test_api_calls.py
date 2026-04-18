@@ -2,6 +2,8 @@ from unittest.mock import patch,Mock
 from working_project.src.api_calls import call_fmi_api
 
 
+
+
 def test_call_fmi_api_returns_bytes():
     fake_response = Mock()
     fake_response.content = b'fake data'
