@@ -1,52 +1,87 @@
-# from working_project.src
-from working_project.src.models import WeatherModel, WeatherTable
-from working_project.src.utility import validate_data, insert_to_db, batch_data
-from working_project.src.api_calls import call_fmi_api
-from working_project.src.data_cleaning import parse_xml_to_raw_row_dict
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
+from working_project.src.data_cleaning import clean_data, parse_response
+from working_project.src.db_functions import create_tables, latest_timestamp
+from working_project.src.api_calls import call_fmi_api
 from decouple import config
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy import inspect
-from contextlib import contextmanager
+import logging
 
-user = config('POSTGRES_USER')
-passw = config('POSTGRES_PASSWORD')
-db = config('POSTGRES_DB')
-db_host = config('POSTGRES_HOST', default='localhost')
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
+# pipeline test
+logger = logging.getLogger(__name__)
+# 
+def the_project() -> tuple[bool, str]:
+    """
+    this method stores data to postgres tables 
+    raw_forecast and current_forecast
+    returns: tuple[bool, str]
+    :rtype: tuple[bool, str]
+     - bool: indicates if the database was updated successfully
+     - str: message providing additional information about the operation
+     - "database was updated" if the operation was successful
+     - "dataframe is empty" if there is no new data to insert
+     - "tables were not created" if the database tables could not be created
+     - error message if an exception occurred during the database update process
+    """
+    # decouple gets path from .env
+    user = config('POSTGRES_USER')
+    passw = config('POSTGRES_PASSWORD')
+    db = config('POSTGRES_DB')
+    db_host = config('POSTGRES_HOST', default='localhost')
 
-path_to_db = f'postgresql://{user}:{passw}@{db_host}:5432/{db}'
+    path_to_db = f'postgresql://{user}:{passw}@{db_host}:5432/{db}'
 
-engine = create_engine(path_to_db)
+    engine = create_engine(path_to_db)
 
-SessionLocal = sessionmaker(bind=engine)
-inspector = inspect(engine)
+    resp = call_fmi_api()
+    if not resp:
+        logger.error(f'API response is None {resp}')
+        raise TypeError('response of the api request is None expected xml')
 
-@contextmanager
-def get_session():
-    session: Session = SessionLocal()
+    df = clean_data(parse_response(resp))
+    # fetches most recent timestamp from the db 
+    if latest_time := latest_timestamp(engine): 
+            logger.info(f'latest time stamp in the DB: {latest_time}')
+            df = df[df['timestamps'] > latest_time].reset_index(drop=True)
+            logger.info(f'new data to insert {len(df)} rows')
+    else:
+        logger.info('no existing data in the DB table empty or missing')
+    
+    if df.empty:
+            logger.error('Data frame empty no new data to insert')
+            return (False, f'dataframe is empty. lastest timestamp in db is {latest_time} ')
     try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+        # tables are created if they dont exits
+        
+        if not create_tables(engine):
+            logger.error('Failed to create database tables')
+            return (False, 'tables were not created')
+        
+        logger.info(f'inserting {len(df) }rows')
+        df.to_sql('raw_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
+        df.to_sql('current_forecast', engine, if_exists='append', index=False, method='multi', chunksize=500)
+        logger.info('Data was inserted successfully')
+        return (True, 'database was updated')
+    except SQLAlchemyError as e:
+        logger.info(f'Database error: {e}', exc_info=True)
+        return(False, 'an error occurred while saving data to the database')
 
 
 def main():
-    print('why not working ')
+    try:
+        result = the_project()
+        if isinstance(result, tuple):
+            is_success, message = result
+            if is_success:
+                logger.info('database was updated')
+            else:
+                logger.warning(f'database update failed: {message}')
+        else:
+            logger.error('unexpected return value from the_project function')
+    except Exception as e:
+        logger.critical(f'Unhandled error in the main() {e}', exc_info=True)
+        raise
 
-    resp = call_fmi_api()
-
-
-    for dict_row in parse_xml_to_raw_row_dict(resp):
-        validate_data(dict_row)
-    with get_session() as session:
-        if not inspector.has_table(WeatherTable.__tablename__):
-            WeatherTable.metadata.create_all(bind=engine)
-        for batch in batch_data(parse_xml_to_raw_row_dict(resp), 1000):
-            insert_to_db(session, batch)
 
 if __name__ == "__main__":
     main()
