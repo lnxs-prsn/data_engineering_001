@@ -13,7 +13,7 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 
 ## TECH STACK
 1. python 3.11
-2. pandas
+2. pydantic
 3. sqlalchemy
 4. requests
 5. decouple
