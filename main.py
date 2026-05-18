@@ -40,7 +40,13 @@ DATA_FILE = TEST_DIR / 'test_response_sample_fmi.xml'
 
 
 def main():
-
+    """
+    calls api, 
+    parses data, 
+    validates data, 
+    batches data, 
+    inserts data to db  
+    """
         
     resp = call_fmi_api()
     
