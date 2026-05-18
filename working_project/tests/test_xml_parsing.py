@@ -1,5 +1,4 @@
 from working_project.src.data_cleaning import parse_xml_to_raw_row_dict
-from working_project.src.utility import validate_data
 from working_project.src.models import WeatherModel
 from pathlib import Path
 
@@ -23,10 +22,9 @@ def test_parse_xml_to_raw_row_dict():
     assert len(db_row_in_dict_format) > 0
     assert 'timestamps' in db_row_in_dict_format.keys()
     assert 'temperature' in db_row_in_dict_format.keys()
-    assert type(db_row_in_dict_format['timestamps']) == datetime
+    assert isinstance(db_row_in_dict_format['timestamps'], datetime) 
 
 
-# test_parse_xml_to_raw_row_dict()
 
 def test_data_cleaning():
     db_row_in_dict_format = load_first_parsed_row()

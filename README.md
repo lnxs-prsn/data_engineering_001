@@ -2,10 +2,8 @@
 
 Simple data pipeline that fetches weather forecast data from FMI wfs endpoint for Helsinki area, parses and cleans the data, and stores it in a PostgreSQL database. 
 
-## DATA IS STORED IN 2 TABLES
-* raw_forecast and current_forecast
-  1. current_forecast does not allow duplicate data and raw_forecast allows duplicate data
-     1. reason for this arrangement is to be able to recover from human or api errors 
+## DATA IS STORED IN 1 TABLE
+* weather_table
 
 
 
@@ -13,7 +11,7 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 
 ## TECH STACK
 1. python 3.11
-2. pandas
+2. pydantic
 3. sqlalchemy
 4. requests
 5. decouple
@@ -21,12 +19,13 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 7. docker
 8. pytest
 
+
 ## PIPELINE FLOW
 1. call_fmi_api() in api_calls.py is responsible for calling the api and fetching data from it
-1. parse_response() in data_cleaning.py is responsible for parsing the data
-2. clean_data() in data_cleaning.py is responsible for cleaning the data and creating dataframe
-3. save_to_db() in db_functions.py is responsible for saving the data to the database
-4. last_timestamp() in db_functions.py is responsible for getting the latest timestamp from the database is compared to the timestamps in the dataframe to filter out already existing data
+   1. in case of issues it retries 3 times writes logs currently logs are not persisted anywhere 
+2. parse_xml_to_raw_row_dict() in data_cleaning.py is responsible for parsing the data and removing NaN values
+3. insert_to_db() in utility.py is responsible for inserting rows to database
+4. latest_db_timestamp() in utility.py is responsible for getting the latest timestamp row from the database 
 5. main() in main.py is responsible for orchestrating the whole pipeline
 
 
@@ -34,16 +33,21 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 1.  clone repo 
 2.  copy .env.example to your own .env file and set values you want
 3. if you don't have uv astral install it <!-- https://docs.astral.sh/uv/getting-started/installation/        #there might have been changes after adding link here -->
-4. if you have python 3.11 run uv sync else run uv python install 3.11 and run uv sync
-5. start virtual enviroment if on linux source .venv/bin/activate and if on windows .venv/Scripts/activate
-6. run docker-compose  up -d if you want to run it in the background.
-7. run python main.py in the data_engineering_001 directory 
+4. if you have python 3.11 
+   1. type uv sync click enter click enter
+5. else type uv python install 3.11 click enter
+6. then type run uv sync click enter
+7. start virtual enviroment 
+   1. if on linux source .venv/bin/activate 
+   2. if on windows .venv/Scripts/activate
+8. type docker-compose up -d click enter if you want to run it in the background.
+9.  run python main.py in the data_engineering_001 directory 
 
 
 
 ## TESTING
-  - run pytest in the working_project/tests
-  - pytest 
+  - cd working_directory
+  - type pytest click enter
   - expected result
-  - collected 4 items 
-  - passed 4 items
+  - collected 6 items 
+  - passed 6 items

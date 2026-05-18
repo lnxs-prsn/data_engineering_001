@@ -2,8 +2,14 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from decimal import Decimal
 from datetime import datetime
+from sqlalchemy import Numeric, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class WeatherModel(BaseModel):
+    """
+    
+    """
+
     id: Optional[int] = None   
     pressure: Decimal = Field(max_digits=12, decimal_places=4)   
     geopheight: Decimal = Field(max_digits=12, decimal_places=4)
@@ -32,16 +38,19 @@ class WeatherModel(BaseModel):
 
 
 # sqlalchemy
-from sqlalchemy import Column, Numeric, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
 
 
 class Base(DeclarativeBase):
     pass
 
 class WeatherTable(Base):
-    __tablename__ = 'weathertables'
-    id: Mapped[int] = mapped_column(primary_key=True, unique=True, autoincrement=True)   
+    """
+    """
+
+
+    __tablename__ = 'weather_table'
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)   
     pressure: Mapped[Decimal] = mapped_column(Numeric(12, 4))   
     geopheight: Mapped[Decimal] = mapped_column(Numeric(12, 4))
     temperature: Mapped[Decimal] = mapped_column(Numeric(12, 4))
