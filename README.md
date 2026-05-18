@@ -31,12 +31,12 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 
 ## HOW TO RUN
 1.  clone repo 
-2.  copy .env.example to your own .env file and set values you want
+2.  copy env.example to your own .env file and set values you want
 3. if you don't have uv astral install it <!-- https://docs.astral.sh/uv/getting-started/installation/        #there might have been changes after adding link here -->
 4. if you have python 3.11 
    1. type uv sync click enter click enter
 5. else type uv python install 3.11 click enter
-6. then type run uv sync click enter
+6. then type uv sync click enter
 7. start virtual enviroment 
    1. if on linux source .venv/bin/activate 
    2. if on windows .venv/Scripts/activate

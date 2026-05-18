@@ -83,6 +83,6 @@ def insert_to_db(db_session: Session, batch: list[dict],  ) -> None:
 
 
 def latest_db_timestamp(session: Session):
-    query = select(WeatherTable.timestamps).order_by(WeatherTable.timestamps.asc()).limit(1)
-    newest_db_timestamp = session.execute(query).scalar_one_or_none()
+    query_latest_timestamp = select(WeatherTable.timestamps).order_by(WeatherTable.timestamps.desc()).limit(1)
+    newest_db_timestamp = session.execute(query_latest_timestamp).scalar_one_or_none()
     return newest_db_timestamp
