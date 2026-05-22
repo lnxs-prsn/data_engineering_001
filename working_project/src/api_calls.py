@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(mes
 
 logger = logging.getLogger(__name__)
 
-# this file is responsible for calling the api and fetching data from it
+
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(4), retry=retry_if_exception_type(requests.RequestException), 
        before_sleep= lambda retry_status: logger.warning(f'retrying after error {retry_status}' ))
 def call_fmi_api() -> bytes:
@@ -34,14 +34,12 @@ def call_fmi_api() -> bytes:
         # 'starttime': '',
         # 'endtime':'',
     }
-    # not sure if there should be comments here as its self explanatory
-    ##
+
     logger.info('calling api')
     resp = requests.get(url=url, params=params)
     resp.raise_for_status()
-    # print(type(resp.content))  
 
 
     return resp.content 
 
-# call_fmi_api()
+

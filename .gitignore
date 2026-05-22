@@ -5,13 +5,13 @@ build/
 dist/
 wheels/
 *.egg-info
-
+.pytest_cache
 # Virtual environments
 .venv
 
 
-# python project files that might be used later
-latest_db_row.py
-learning_diary
+#ruff
+.ruff_cache
+
 #env
 .env
