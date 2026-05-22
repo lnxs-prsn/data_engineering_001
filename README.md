@@ -22,8 +22,7 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 
 ## PIPELINE FLOW
 1. call_fmi_api() in api_calls.py is responsible for calling the api and fetching data from it
-   1. in case of issues it retries 3 times writes logs currently logs are not persisted anywhere 
-2. parse_xml_to_raw_row_dict() in data_cleaning.py is responsible for parsing the data and removing NaN values
+1. parse_xml_to_raw_row_dict() in data_cleaning.py is responsible for parsing the data and removing NaN values
 3. insert_to_db() in utility.py is responsible for inserting rows to database
 4. latest_db_timestamp() in utility.py is responsible for getting the latest timestamp row from the database 
 5. main() in main.py is responsible for orchestrating the whole pipeline
