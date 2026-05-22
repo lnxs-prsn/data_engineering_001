@@ -35,19 +35,19 @@ def parse_xml_to_raw_row_dict(resp: requests.Response) -> Generator[dict, None, 
             if line.strip():
                 time_stamps.append(line.split()[-1])
 
-
+#tvp = timevaluepair?
     for idx, tvp in enumerate(root.xpath('//gml:doubleOrNilReasonTupleList', namespaces=ns)):
         if not tvp.text:
             continue
         
-        for line in tvp.text.split('\n'):
-            if not line.strip():
+        for row_of_raw_values in tvp.text.split('\n'):
+            if not row_of_raw_values.strip():
                 continue
             
-            row_values = line.split()
-            if len(row_values) != len(column_names):
+            row_of_cleaned_values = row_of_raw_values.split()
+            if len(row_of_cleaned_values) != len(column_names):
                 continue
-            raw_row_dict = dict(zip(column_names, row_values))
+            raw_row_dict = dict(zip(column_names, row_of_cleaned_values))
             nan_keys = [k for k, v in raw_row_dict.items() if v == "NaN"]  # ['radiationnetsurfacelwaccumulation']
             for k in nan_keys:
                 del raw_row_dict[k]
@@ -55,32 +55,10 @@ def parse_xml_to_raw_row_dict(resp: requests.Response) -> Generator[dict, None, 
             if idx < len(time_stamps):
                 raw_row_dict['timestamps'] = datetime.fromtimestamp(int(time_stamps[idx]))
             yield raw_row_dict
-    logger.info(f' these columns have nan values and were excluded from the db {nan_keys}')
+    logger.debug(f' these columns have nan values and were excluded from the db {nan_keys}')
 
 
 
-
-
-# def clean_data(columns_rows_timestamps: dict) -> pandas.DataFrame:
-#     """
-#     clean_data
-#     function receives dictionary from parse_response and cleans the data so it can be stored to postgres db
-#     :return: python dataframe
-#     :rtype: object
-#     """
-#     data = columns_rows_timestamps
-
-#     # data from xml is getting stored to df
-#     df = pandas.DataFrame(data['rows'], columns=data['columns'], dtype=float)
-#     # timestamps column is added to dataframe
-#     df['timestamps'] = data['timestamps']
-#     # type conversion for timestamps column
-#     df['timestamps'] = pandas.to_datetime(df['timestamps'].astype(int), unit='s')
-#     # NaN data column is dropped
-#     df = df.drop(columns=['radiationnetsurfacelwaccumulation'])
-#     # duplicates are dropped
-#     df = df.drop_duplicates()
-#     return df
 
 
 

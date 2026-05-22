@@ -13,8 +13,5 @@ wheels/
 #ruff
 .ruff_cache
 
-# python project files that might be used later
-latest_db_row.py
-learning_diary
 #env
 .env
