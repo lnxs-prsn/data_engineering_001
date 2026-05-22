@@ -9,6 +9,12 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import inspect
 from contextlib import contextmanager
 from pathlib import Path
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
+
+logger = logging.getLogger(__name__)
+
 
 user = config('POSTGRES_USER')
 passw = config('POSTGRES_PASSWORD')
@@ -48,16 +54,18 @@ def main():
         
     resp = call_fmi_api()
     
-
-    for dict_row in parse_xml_to_raw_row_dict(resp):
-        validate_data(dict_row)
-    with get_session() as session:
-        if not inspector.has_table(WeatherTable.__tablename__):
-            WeatherTable.metadata.create_all(bind=engine)
-        for batch in batch_data(parse_xml_to_raw_row_dict(resp), 1000):
-            if latest_timestamp:=latest_db_timestamp(session):
-                batch[:] = [row for row in batch if row['timestamps'] > latest_timestamp ]
-            insert_to_db(session, batch)
-
+    try:
+        
+        with get_session() as session:
+            if not inspector.has_table(WeatherTable.__tablename__):
+                WeatherTable.metadata.create_all(bind=engine)
+            for batch in batch_data(parse_xml_to_raw_row_dict(resp), 1000):
+                if latest_timestamp:=latest_db_timestamp(session):
+                    batch[:] = [row for row in batch if row['timestamps'] > latest_timestamp ]
+                for dict_row in batch:
+                    validate_data(dict_row)
+                insert_to_db(session, batch)
+    except Exception as e:
+        logging.warning(f'Error caught {e}')
 if __name__ == "__main__":
     main()
