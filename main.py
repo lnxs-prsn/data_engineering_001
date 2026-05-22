@@ -34,8 +34,6 @@ def get_session():
     finally:
         session.close()
 
-TEST_DIR = Path(__file__).parent
-DATA_FILE = TEST_DIR / 'test_response_sample_fmi.xml'
 
 
 

@@ -7,7 +7,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class WeatherModel(BaseModel):
     """
-    
+    pydantic fields data is  validated against 
     """
 
     id: Optional[int] = None   
@@ -46,6 +46,7 @@ class Base(DeclarativeBase):
 
 class WeatherTable(Base):
     """
+    orm model that is persisted in the sql data base
     """
 
 

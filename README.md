@@ -18,6 +18,7 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 6. postgresql
 7. docker
 8. pytest
+9. uv
 
 
 ## PIPELINE FLOW

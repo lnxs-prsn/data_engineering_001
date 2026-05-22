@@ -39,5 +39,3 @@ def test_validate_timestamps():
     assert validated_model.timestamps == datetime(2026, 2, 21, 16, 0)
     assert validated_model.timestamps.year == 2026
 
-
-# test_validate_data()

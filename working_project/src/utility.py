@@ -29,7 +29,7 @@ def validate_data(raw_row_dict: dict, return_validated_data: bool=False) -> Weat
         if return_validated_data:
             return model
     except (TypeError, ValueError, ValidationError) as e:
-        logger.debug(f'Errors found: {e}')
+        logger.warning(f'Errors found: {e}')
 
         
 
