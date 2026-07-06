@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(mes
 logger = logging.getLogger(__name__)
 
 
-def validate_data(raw_row_dict: dict) -> WeatherModel | None:
+def validate_data(dict_generator: Generator[dict, None, None]) -> Generator[dict, None, None]:
     """
     Validate weather data and optionally return the validated model.
 
@@ -24,11 +24,12 @@ def validate_data(raw_row_dict: dict) -> WeatherModel | None:
         WeatherModel if validation succeeds and return_validated_data is True,
         otherwise None.
     """
-    try:
-        model = WeatherModel(**raw_row_dict)
-        yield model.model_dump()
-    except (TypeError, ValueError, ValidationError) as e:
-        logger.warning(f'Errors found: {e}')
+    for raw_row_dict in dict_generator:
+        try:
+            model = WeatherModel(**raw_row_dict)
+            yield model.model_dump()
+        except (TypeError, ValueError, ValidationError) as e:
+            logger.warning(f'Errors found: {e}')
 
         
 

@@ -38,8 +38,8 @@ def parse_xml_to_raw_row_dict(resp: requests.Response) -> Generator[dict, None, 
                 continue
             data_row = data_line.strip().split(' ')
             time_row = time_line.strip().split(' ')
-            # if not time_row[-1].strip() or not data_row[-1]:
-            #     continue
+            if not time_row[-1].strip() or not data_row[-1]:
+                continue
             data_row.append(datetime.fromtimestamp(int(time_row[-1])))
 
             ready_row = data_row

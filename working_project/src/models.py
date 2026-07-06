@@ -10,7 +10,7 @@ class WeatherModel(BaseModel):
     pydantic fields data is  validated against 
     """
 
-    id: Optional[int] = None   
+    
     pressure: Decimal = Field(max_digits=12, decimal_places=4)   
     geopheight: Decimal = Field(max_digits=12, decimal_places=4)
     temperature: Decimal = Field(max_digits=12, decimal_places=4)
@@ -32,7 +32,7 @@ class WeatherModel(BaseModel):
     visibility: Decimal = Field(max_digits=12, decimal_places=4)   
     windgust: Decimal = Field(max_digits=12, decimal_places=4)   
     timestamps: datetime  
-    created_at: Optional[datetime] = None
+    
 
 
 
