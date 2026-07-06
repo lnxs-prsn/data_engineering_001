@@ -14,7 +14,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
 
 logger = logging.getLogger(__name__)
-
+print('hello')
 
 user = config('POSTGRES_USER')
 passw = config('POSTGRES_PASSWORD')
@@ -51,21 +51,26 @@ def main():
     batches data, 
     inserts data to db  
     """
-        
-    resp = call_fmi_api()
+    print('hellou')
+
+    # resp = call_fmi_api()
+    with open('working_project/src/test_response_sample_fmi.xml', 'rb') as resp:
+        resp = resp.read()
     
-    try:
-        
-        with get_session() as session:
-            if not inspector.has_table(WeatherTable.__tablename__):
-                WeatherTable.metadata.create_all(bind=engine)
-            for batch in batch_data(parse_xml_to_raw_row_dict(resp), 1000):
-                if latest_timestamp:=latest_db_timestamp(session):
-                    batch[:] = [row for row in batch if row['timestamps'] > latest_timestamp ]
-                for dict_row in batch:
-                    validate_data(dict_row)
-                insert_to_db(session, batch)
-    except Exception as e:
-        logging.warning(f'Error caught {e}')
+        try:
+            print('hello1')
+            
+            with get_session() as session:
+                print('hello2')
+                if not inspector.has_table(WeatherTable.__tablename__):
+                    WeatherTable.metadata.create_all(bind=engine)
+                    
+                for batch in batch_data(validate_data(parse_xml_to_raw_row_dict(resp)), 1000):
+                    print('helo')
+                    if latest_timestamp:=latest_db_timestamp(session):
+                        batch[:] = [row for row in batch if row['timestamps'] > latest_timestamp ]
+                    insert_to_db(session, batch)
+        except Exception as e:
+            logging.info(f'Error caught {e}')
 if __name__ == "__main__":
     main()
