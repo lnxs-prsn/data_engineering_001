@@ -1,13 +1,15 @@
 from lxml import etree
 import requests
 from typing import Generator
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
+from logging.handlers import RotatingFileHandler
 
-
-logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
-
+handler = RotatingFileHandler('weather_app.log', maxBytes=1_000_000, backupCount=3)
+handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 
 
@@ -40,10 +42,13 @@ def parse_xml_to_raw_row_dict(resp: requests.Response) -> Generator[dict, None, 
             time_row = time_line.strip().split(' ')
             if not time_row[-1].strip() or not data_row[-1]:
                 continue
-            data_row.append(datetime.fromtimestamp(int(time_row[-1])))
+            data_row.append(datetime.fromtimestamp(int(time_row[-1]), tz=timezone.utc))
 
             ready_row = data_row
             ready_dict = dict(zip(column_names, ready_row))
-            ready_dict.pop('radiationnetsurfacelwaccumulation')
+            if 'radiationnetsurfacelwaccumulation' in ready_dict:
+                del ready_dict['radiationnetsurfacelwaccumulation']
+            else:
+                logger.warning("'radiationnetsurfacelwaccumulation' not found in the data there might be other changes in api")
             yield ready_dict
 

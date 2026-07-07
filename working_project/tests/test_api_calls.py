@@ -14,7 +14,7 @@ def test_call_fmi_api_returns_bytes():
         assert isinstance(result, bytes)
         assert result == b'fake data'
 
-        mock_get.assert_called_once
+        mock_get.assert_called_once()
 
 
 

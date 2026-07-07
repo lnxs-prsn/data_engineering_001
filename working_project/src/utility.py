@@ -5,11 +5,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 import logging
 from pydantic import ValidationError
+from logging.handlers import RotatingFileHandler
 
-
-logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
-
+handler = RotatingFileHandler('weather_app.log', maxBytes=1_000_000, backupCount=3)
+handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 
 def validate_data(dict_generator: Generator[dict, None, None]) -> Generator[dict, None, None]:
@@ -24,12 +26,21 @@ def validate_data(dict_generator: Generator[dict, None, None]) -> Generator[dict
         WeatherModel if validation succeeds and return_validated_data is True,
         otherwise None.
     """
+    wrong_data = []
+    total_rows = 0
     for raw_row_dict in dict_generator:
+        total_rows += 1
+
         try:
             model = WeatherModel(**raw_row_dict)
             yield model.model_dump()
         except (TypeError, ValueError, ValidationError) as e:
-            logger.warning(f'Errors found: {e}')
+            logger.info(f'Errors found: {e}')
+            wrong_data.append(raw_row_dict)
+    if wrong_data and len(wrong_data) / total_rows > 0.5:
+        raise ValueError(f'more than 50 percent of the rows failed to validate. total failures: {wrong_data}')
+    elif wrong_data:
+        logger.warning(f"{len(wrong_data)} rows failed validation, continuing with the rest")
 
         
 
@@ -65,7 +76,7 @@ def batch_data(parse_xml_to_raw_row_dict: Generator[dict, None, None], batch_siz
 
 
 
-def insert_to_db(db_session: Session, batch: list[dict],  ) -> None:
+def add_to_insert_que(db_session: Session, batch: list[dict],  ) -> None:
     """
 
     Inserts weather data into the database.
@@ -79,7 +90,6 @@ def insert_to_db(db_session: Session, batch: list[dict],  ) -> None:
     stmt = insert(WeatherTable).values(batch)
     stmt = stmt.on_conflict_do_nothing(index_elements=['timestamps'])
     db_session.execute(stmt)
-    db_session.commit()
 
 
 def latest_db_timestamp(session: Session):
