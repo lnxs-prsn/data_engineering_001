@@ -8,7 +8,6 @@ from decouple import config
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import inspect
 from contextlib import contextmanager
-from pathlib import Path
 import logging
 from logging.handlers import RotatingFileHandler
 

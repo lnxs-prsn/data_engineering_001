@@ -2,7 +2,7 @@ from working_project.src.data_cleaning import parse_xml_to_raw_row_dict
 from working_project.src.utility import validate_data
 from pathlib import Path
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 TEST_DIR = Path(__file__).parent
 DATA_FILE = TEST_DIR / 'test_response_sample_fmi.xml'

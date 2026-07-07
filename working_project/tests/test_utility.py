@@ -1,9 +1,9 @@
-from working_project.src.utility import *
+from working_project.src.utility import batch_data, latest_db_timestamp, add_to_insert_que, validate_data
 from working_project.src.models import WeatherTable
 from pathlib import Path
 from working_project.src.data_cleaning import parse_xml_to_raw_row_dict
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 import pytest
 
 

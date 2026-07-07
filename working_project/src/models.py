@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import Optional
 from decimal import Decimal
 from datetime import datetime
 from sqlalchemy import Numeric, func
