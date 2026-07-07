@@ -5,14 +5,18 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 import logging
 from pydantic import ValidationError
+from logging.handlers import RotatingFileHandler
+from datetime import datetime
 
 
-logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
-
+handler = RotatingFileHandler("weather_app.log", maxBytes=1_000_000, backupCount=3)
+handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 
-def validate_data(raw_row_dict: dict, return_validated_data: bool=False) -> WeatherModel | None:
+def validate_data(dict_generator: Generator[dict, None, None]) -> Generator[dict, None, None]:
     """
     Validate weather data and optionally return the validated model.
 
@@ -24,34 +28,41 @@ def validate_data(raw_row_dict: dict, return_validated_data: bool=False) -> Weat
         WeatherModel if validation succeeds and return_validated_data is True,
         otherwise None.
     """
-    try:
-        model = WeatherModel(**raw_row_dict)
-        if return_validated_data:
-            return model
-    except (TypeError, ValueError, ValidationError) as e:
-        logger.warning(f'Errors found: {e}')
+    wrong_data = []
+    total_rows = 0
+    for raw_row_dict in dict_generator:
+        total_rows += 1
 
-        
+        try:
+            model = WeatherModel(**raw_row_dict)
+            yield model.model_dump()
+        except (TypeError, ValueError, ValidationError) as e:
+            logger.info(f"Errors found: {e}")
+            wrong_data.append(raw_row_dict)
+    if wrong_data and len(wrong_data) / total_rows > 0.5:
+        raise ValueError(
+            f"more than 50 percent of the rows failed to validate. total failures: {wrong_data}"
+        )
+    elif wrong_data:
+        logger.warning(f"{len(wrong_data)} rows failed validation, continuing with the rest")
 
 
-    
-    
-
-
-def batch_data(parse_xml_to_raw_row_dict: Generator[dict, None, None], batch_size: int) -> Generator[list, None, None]:
+def batch_data(
+    parse_xml_to_raw_row_dict: Generator[dict, None, None], batch_size: int
+) -> Generator[list, None, None]:
     """
-    iterates rows from parser 
+    iterates rows from parser
     yields list which length <= batch_size
 
-    args: 
-        parse_xml_to_raw_row_dict: Generator yielding row of dict 
+    args:
+        parse_xml_to_raw_row_dict: Generator yielding row of dict
         batch_size: int
 
     returns:
         Generator/iterable list
-        or 
+        or
         none
-    
+
     """
     if parse_xml_to_raw_row_dict:
         batch = []
@@ -64,25 +75,28 @@ def batch_data(parse_xml_to_raw_row_dict: Generator[dict, None, None], batch_siz
             yield batch
 
 
-
-def insert_to_db(db_session: Session, batch: list[dict],  ) -> None:
+def add_to_insert_que(
+    db_session: Session,
+    batch: list[dict],
+) -> None:
     """
 
     Inserts weather data into the database.
 
     if timestamp already exists in the database it wont be inserted to database
-    
+
     """
     if not batch:
         return None
-    
+
     stmt = insert(WeatherTable).values(batch)
-    stmt = stmt.on_conflict_do_nothing(index_elements=['timestamps'])
+    stmt = stmt.on_conflict_do_nothing(index_elements=["timestamps"])
     db_session.execute(stmt)
-    db_session.commit()
 
 
-def latest_db_timestamp(session: Session):
-    query_latest_timestamp = select(WeatherTable.timestamps).order_by(WeatherTable.timestamps.desc()).limit(1)
+def latest_db_timestamp(session: Session) -> datetime | None:
+    query_latest_timestamp = (
+        select(WeatherTable.timestamps).order_by(WeatherTable.timestamps.desc()).limit(1)
+    )
     newest_db_timestamp = session.execute(query_latest_timestamp).scalar_one_or_none()
     return newest_db_timestamp

@@ -1,17 +1,22 @@
 [project]
-name = "fmi"
+name = "helsinki-weather-pipeline"
 version = "0.1.0"
-description = "Add your description here"
+description = "Weather forecast for data pipeline for Helsinki using FMI API"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "lxml>=6.0.2",
+    "psycopg2-binary>=2.9.12",
     "pydantic>=2.12.5",
-    "pytest>=9.0.2",
     "python-decouple>=3.8",
     "pyyaml>=6.0.3",
     "requests>=2.32.5",
-    "ruff>=0.15.5",
     "sqlalchemy>=2.0.48",
     "tenacity>=9.1.4",
 ]
+[dependency-groups]
+dev = ["ruff>=0.15.5", "pytest>=9.0.2"]
+[tool.ruff]
+line-length = 100
+[tool.pytest.ini_options]
+testpaths = ["working_project/tests"]
