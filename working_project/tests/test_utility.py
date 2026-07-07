@@ -61,6 +61,6 @@ def test_latest_timestamp(session):
         add_to_insert_que(session, batch)
     
     latest_timestamp = latest_db_timestamp(session)
-    query = session.execute(select(WeatherTable.timestamps).order_by(WeatherTable.timestamps.desc())).limit(1)
+    query = select(WeatherTable.timestamps).order_by(WeatherTable.timestamps.desc()).limit(1)
     latest_manual_timestamp = session.execute(query).scalar_one_or_none()
     assert latest_timestamp == latest_manual_timestamp
