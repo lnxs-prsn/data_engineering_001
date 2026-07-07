@@ -38,7 +38,7 @@ def test_validate_distinct_timestamps():
     distinct_timestamps = []
     duplicate_timestamps =  []
     for row in validated_model:
-        if row['timestamps'] not in row.items():
+        if row['timestamps'] not in distinct_timestamps:
             distinct_timestamps.append(row['timestamps'])
         else:
             duplicate_timestamps.append(row['timestamps'])
