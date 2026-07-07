@@ -35,7 +35,7 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 3. if you don't have uv made by astral install it  https://docs.astral.sh/uv/getting-started/installation/        # uv docs for latest install instructions 
 4. if you dont have python 3.11 type uv python install 3.11 click enter 
 5. then type uv sync click enter
-6. start virtual enviroment 
+6. start virtual environment 
    1. if on linux source .venv/bin/activate 
    2. if on windows .venv/Scripts/activate
 7. type docker compose up -d click enter if you want to run it in the background.
