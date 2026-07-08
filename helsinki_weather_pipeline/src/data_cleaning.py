@@ -41,6 +41,7 @@ def parse_xml_to_raw_row_dict(resp: bytes) -> Generator[dict, None, None]:
                 data_row.append(datetime.fromtimestamp(int(time_row[-1]), tz=timezone.utc))
             else:
                 duplicate_time_stamps.append(time_row[-1])
+                data_row.append(datetime.fromtimestamp(int(time_row[-1]), tz=timezone.utc))
                 
             ready_row = data_row
             ready_dict = dict(zip(column_names, ready_row))
