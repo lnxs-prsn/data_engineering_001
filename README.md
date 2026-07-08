@@ -43,6 +43,9 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 4. latest_db_timestamp() in utility.py is responsible for getting the latest timestamp row from the database 
 5. main() in main.py is responsible for orchestrating the whole pipeline
 
+
+## PROJECT STRUCTURE
+```
 ├── docker-compose.yml
 ├── env.example
 ├── helsinki_weather_pipeline
@@ -68,6 +71,8 @@ Simple data pipeline that fetches weather forecast data from FMI wfs endpoint fo
 ├── README.md
 ├── uv.lock
 └── weather_app.log
+```
+
 
 ## TESTING
   - at project root
