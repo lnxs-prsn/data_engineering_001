@@ -1,5 +1,5 @@
 [project]
-name = "helsinki-weather-pipeline"
+name = "helsinki_weather_pipeline"
 version = "0.1.0"
 description = "Weather forecast for data pipeline for Helsinki using FMI API"
 readme = "README.md"

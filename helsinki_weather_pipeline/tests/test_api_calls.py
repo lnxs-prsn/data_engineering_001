@@ -1,5 +1,5 @@
 from unittest.mock import patch, Mock
-from working_project.src.api_calls import call_fmi_api
+from helsinki_weather_pipeline.src.api_calls import call_fmi_api
 
 
 def test_call_fmi_api_returns_bytes():

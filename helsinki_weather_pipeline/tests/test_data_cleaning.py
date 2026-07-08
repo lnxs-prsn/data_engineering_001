@@ -1,5 +1,5 @@
-from working_project.src.data_cleaning import parse_xml_to_raw_row_dict
-from working_project.src.utility import validate_data
+from helsinki_weather_pipeline.src.data_cleaning import parse_xml_to_raw_row_dict
+from helsinki_weather_pipeline.src.utility import validate_data
 from pathlib import Path
 
 from datetime import datetime

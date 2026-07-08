@@ -1,5 +1,4 @@
 from lxml import etree
-import requests
 from typing import Generator
 from datetime import datetime, timezone
 import logging
@@ -12,7 +11,7 @@ logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
-def parse_xml_to_raw_row_dict(resp: requests.Response) -> Generator[dict, None, None]:
+def parse_xml_to_raw_row_dict(resp: bytes) -> Generator[dict, None, None]:
     """
     function receives binary from the call_api and parses the data to usable format for cleaning and storing to postgres db
     :return: Generator which yields dictionary

@@ -1,4 +1,4 @@
-from working_project.src.models import WeatherModel
+from helsinki_weather_pipeline.src.models import WeatherModel
 from decimal import Decimal
 import pytest
 from pydantic import ValidationError

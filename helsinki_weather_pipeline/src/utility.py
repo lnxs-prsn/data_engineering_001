@@ -1,4 +1,4 @@
-from working_project.src.models import WeatherModel, WeatherTable
+from helsinki_weather_pipeline.src.models import WeatherModel, WeatherTable
 from typing import Generator
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -21,12 +21,10 @@ def validate_data(dict_generator: Generator[dict, None, None]) -> Generator[dict
     Validate weather data and optionally return the validated model.
 
     Args:
-        raw_row_dict: Dictionary containing raw weather data.
-        return_validated_data: If True, return the validated WeatherModel instance.
+        dict_generator: Dictionary containing raw weather data.
 
     Returns:
-        WeatherModel if validation succeeds and return_validated_data is True,
-        otherwise None.
+        Generator[dict,None,None]
     """
     wrong_data = []
     total_rows = 0

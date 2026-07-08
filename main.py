@@ -1,13 +1,13 @@
 # from working_project.src
-from working_project.src.models import WeatherTable
-from working_project.src.utility import (
+from helsinki_weather_pipeline.src.models import WeatherTable
+from helsinki_weather_pipeline.src.utility import (
     validate_data,
     add_to_insert_que,
     batch_data,
     latest_db_timestamp,
 )
-from working_project.src.api_calls import call_fmi_api
-from working_project.src.data_cleaning import parse_xml_to_raw_row_dict
+from helsinki_weather_pipeline.src.api_calls import call_fmi_api
+from helsinki_weather_pipeline.src.data_cleaning import parse_xml_to_raw_row_dict
 from sqlalchemy import create_engine
 from decouple import config
 from sqlalchemy.orm import sessionmaker, Session
@@ -60,15 +60,12 @@ def main():
     resp = call_fmi_api()
 
     try:
-        print("hello1")
 
         with get_session() as session:
-            print("hello2")
             if not inspector.has_table(WeatherTable.__tablename__):
                 WeatherTable.metadata.create_all(bind=engine)
             latest_timestamp = latest_db_timestamp(session)
             for batch in batch_data(validate_data(parse_xml_to_raw_row_dict(resp)), 1000):
-                print("helo")
                 if latest_timestamp:
                     batch[:] = [row for row in batch if row["timestamps"] > latest_timestamp]
                 add_to_insert_que(session, batch)

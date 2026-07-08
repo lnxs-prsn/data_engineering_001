@@ -3,12 +3,14 @@ from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_t
 import logging
 import yaml
 from pathlib import Path
+from logging.handlers import RotatingFileHandler
 
 
-logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
-
+handler = RotatingFileHandler("weather_app.log", maxBytes=1_000_000, backupCount=3)
+handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 @retry(
     stop=stop_after_attempt(3),
