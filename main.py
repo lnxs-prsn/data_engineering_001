@@ -1,4 +1,3 @@
-# from working_project.src
 from helsinki_weather_pipeline.src.models import WeatherTable
 from helsinki_weather_pipeline.src.utility import (
     validate_data,
@@ -14,14 +13,10 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import inspect
 from contextlib import contextmanager
 import logging
-from logging.handlers import RotatingFileHandler
+from helsinki_weather_pipeline.src.logging_config import setup_logging
 
-handler = RotatingFileHandler("weather_app.log", maxBytes=1_000_000, backupCount=3)
-handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
+setup_logging()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
-
 
 user = config("POSTGRES_USER")
 passw = config("POSTGRES_PASSWORD")
@@ -71,7 +66,7 @@ def main():
                 add_to_insert_que(session, batch)
                 session.commit()
     except Exception as e:
-        logging.error(f"Error caught {e}")
+        logger.error(f"Error caught {e}")
         raise
 
 

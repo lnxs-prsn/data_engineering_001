@@ -2,13 +2,8 @@ from lxml import etree
 from typing import Generator
 from datetime import datetime, timezone
 import logging
-from logging.handlers import RotatingFileHandler
 
-handler = RotatingFileHandler("weather_app.log", maxBytes=1_000_000, backupCount=3)
-handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
 
 
 def parse_xml_to_raw_row_dict(resp: bytes) -> Generator[dict, None, None]:
@@ -46,7 +41,7 @@ def parse_xml_to_raw_row_dict(resp: bytes) -> Generator[dict, None, None]:
                 data_row.append(datetime.fromtimestamp(int(time_row[-1]), tz=timezone.utc))
             else:
                 duplicate_time_stamps.append(time_row[-1])
-                logging.warning("duplicate timestamp found in the data")
+                logger.warning("duplicate timestamp found in the data")
             ready_row = data_row
             ready_dict = dict(zip(column_names, ready_row))
             if "radiationnetsurfacelwaccumulation" in ready_dict:

@@ -8,7 +8,7 @@ def test_call_fmi_api_returns_bytes():
     fake_response.raise_for_status = Mock()
 
     with patch(
-        "working_project.src.api_calls.requests.get", return_value=fake_response
+        "helsinki_weather_pipeline.src.api_calls.requests.get", return_value=fake_response
     ) as mock_get:
         result = call_fmi_api()
         assert isinstance(result, bytes)

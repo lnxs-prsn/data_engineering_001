@@ -5,15 +5,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 import logging
 from pydantic import ValidationError
-from logging.handlers import RotatingFileHandler
 from datetime import datetime
 
 
-handler = RotatingFileHandler("weather_app.log", maxBytes=1_000_000, backupCount=3)
-handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
+
 
 
 def validate_data(dict_generator: Generator[dict, None, None]) -> Generator[dict, None, None]:
